@@ -1,5 +1,6 @@
 import pprint
 import itertools
+from operator import add
 
 def _print(obj, desc=None):
     if desc:
@@ -53,6 +54,8 @@ def flatten(L):
 def popcount(b):
     return b.count("1")
 
+def add_lists(a, b):
+    return list(map(add, a, b))
 
 def test_to_bitstring():
     a = [[1, 3], [0, 2]]

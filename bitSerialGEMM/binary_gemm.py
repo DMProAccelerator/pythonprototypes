@@ -11,7 +11,10 @@ def binary_gemm(W, A, alpha=None):
         for c in range(cols):
             t1 = W[r][c]
             t2 = A[c]
-            R[r] += popcount(_and(t1, t2))
+            if alpha:
+                R[r] += alpha * popcount(_and(t1, t2))
+            else:
+                R[r] += popcount(_and(t1, t2))
     return R
 
 def test_binary_gemm():
