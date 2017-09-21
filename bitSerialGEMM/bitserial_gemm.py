@@ -15,7 +15,10 @@ def bitserial_gemm(W, A):
             for r in range(rows):
                 for c in range(cols):
                     tW[r].append(W[r][c][i])
-            alpha = 2**(i+j)
+            # make sure significance is little endian
+            # because we represent bitstrings with LSB first
+            alpha = 2**((len(W[0][0])-i-1)
+                        +(len(A[0])-j-1))
             R = add_lists(R, binary_gemm(tW, tA, alpha))
     return R
 
