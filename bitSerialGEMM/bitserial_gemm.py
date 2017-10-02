@@ -1,14 +1,15 @@
 import numpy as np
-from binary_gemm import binary_gemm
-from utils import to_bitstring, _and, add_lists
+from utils import to_bitstring, add_lists
 
 def bitserial_gemm(W, A):
     R = [0]*len(W)
-    for i in range(len(W[0][0])):
-        for j in range(len(A[0])):
-            # build A vector
+    w = len(W[0][0])
+    a = len(A[0])
+    for i in range(w):
+        for j in range(a):
+            # build A bitplanes
             tA = [e[j] for e in A]
-            # build W matrix
+            # build W bitplanes
             rows = len(W)
             cols = len(W[0])
             tW = [[] for _ in range(rows)]
@@ -21,6 +22,24 @@ def bitserial_gemm(W, A):
                         +(len(A[0])-j-1))
             R = add_lists(R, binary_gemm(tW, tA, alpha))
     return R
+
+
+def binary_gemm(W, A, alpha=None):
+    """Operate on lists of booleans, return a list of ints"""
+    rows = len(W)
+    cols = len(A)
+    R = [0] * rows
+    for r in range(rows):
+        for c in range(cols):
+            t1 = W[r][c]
+            t2 = A[c]
+            # Since we are working with individual bits we dont popcount
+            if alpha:
+                R[r] += alpha * int(t1 & t2)
+            else:
+                R[r] += int(t1 & t2)
+    return R
+
 
 def test():
     A = [8,0,2]
